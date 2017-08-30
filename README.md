@@ -12,14 +12,14 @@ coordinates and radius in kilometres.
 
 Usage:
 
-  boundingbox [options]
-
-  -dist float
-        distance (radius) in Km (default 2)
-  -lat float
-        latitude (default 46.716993)
-  -lon float
-        longitude (default -71.269204)
+    boundingbox [options]
+    
+        -dist float
+            distance (radius) in Km (default 2)
+        -lat float
+            latitude (default 46.716993)
+        -lon float
+            longitude (default -71.269204)
 
 (The defaults are the city of Charny, near Quebec City.)
 
