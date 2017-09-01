@@ -83,7 +83,6 @@ func NewFeatureCollectionFromFile(filename string) (*FeatureCollection, error) {
 	featCollection.latIndex = btree.New(2)
 	for k, v := range featCollection.Features {
 		if ignoreZeroPop && v.Properties.Population == 0 {
-			fmt.Println("ignoring...")
 			continue
 		}
 		latItem := latIndex{
@@ -137,6 +136,10 @@ func (fc FeatureCollection) GetFeaturesNear(cartoID int64, distance float64) ([]
 	})
 
 	return inLat, nil
+}
+
+func (fc FeatureCollection) Indexed() int {
+	return fc.latIndex.Len()
 }
 
 // The latitude-based index that implements the btree.Item

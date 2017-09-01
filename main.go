@@ -29,13 +29,12 @@ func main() {
 	log.Printf("Reading data from %q\n", dataFile)
 	var err error
 	ignoreZeroPop = true
-	featureCollection, err = NewFeatureCollectionFromFile("/home/robteix/go/src/github.com/robteix/geotests/data/canada_cities.geojson")
-	//featureCollection, err = NewFeatureCollectionFromFile(dataFile)
+	featureCollection, err = NewFeatureCollectionFromFile(dataFile)
 	if err != nil {
 		log.Fatalln("could create the feature collection: ", err)
 	}
 
-	log.Printf("Read and indexed %d features. All ready.\n", len(featureCollection.Features))
+	log.Printf("Read %d features (%d indexed.) All ready.\n", len(featureCollection.Features), featureCollection.Indexed())
 	log.Fatal(http.ListenAndServe(listen, setupAPIRouter()))
 }
 
