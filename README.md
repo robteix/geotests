@@ -3,32 +3,36 @@ geotests
 
 This repository is just me playing with geolocalization.
 
-boundarybox
------------
 
-Implements the algorithm to return a boundary box defined as the minimum box
-that holds a circle projected on a sphere (the Earth) centred at given
-coordinates and radius in kilometres.
+geotests is an API server that allows searching for specific cities by a
+cartodb id as well as cities within a bounding box centred at a specific
+city.
 
 Usage:
 
-  boundingbox [options]
+    geotests [options]
 
-  -dist float
-        distance (radius) in Km (default 2)
-  -lat float
-        latitude (default 46.716993)
-  -lon float
-        longitude (default -71.269204)
+    -f string
+        A geojson file containing the data (shorthand) (default "canada_cities.geojson")
+    -filename string
+        A geojson file containing the data (default "canada_cities.geojson")
+    -l string
+        Where the server will listen to (default ":8000")
+    -nz
+        Ignore features with population 0
 
-(The defaults are the city of Charny, near Quebec City.)
+API
+---
 
-Examples:
+All API requests are answered with a JSON response. In case of success, the
+response will be 200 (OK). In the event of an error, the status will depend
+on the error and you will get a JSON response with a message. e.g.
 
-    $ ./boundingbox -lon 180 -lat 90 -dist 1000
-    81.006798,-180.000000,90.000000,180.000000
-    $ ./boundingbox -lon 78 -lat 180 -dist 1000
-    171.006798,-180.000000,90.000000,180.000000
-    $./boundingbox -lon 78 -lat 180 -dist 5000
-    135.033990,-180.000000,90.000000,180.000000
+    {
+        "error": "could not load city with id 123"
+    }
+
+*Fetching a single city by its cartoDB ID*
+
+    GET /id/<cartodbid>
 
