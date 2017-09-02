@@ -28,7 +28,6 @@ func main() {
 
 	log.Printf("Reading data from %q\n", dataFile)
 	var err error
-	ignoreZeroPop = true
 	featureCollection, err = NewFeatureCollectionFromFile(dataFile)
 	if err != nil {
 		log.Fatalln("could create the feature collection: ", err)
