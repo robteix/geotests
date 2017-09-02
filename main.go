@@ -14,6 +14,7 @@ var (
 	listen        string
 	ignoreZeroPop bool // ignore features with 0 population
 	prettyJSON    bool // whether to indent JSON responses
+	excludeOrigin bool // whether to exclude the point of origin when returning cities within bounding box
 )
 
 func init() {
@@ -22,6 +23,7 @@ func init() {
 	flag.StringVar(&listen, "l", ":8000", "Where the server will listen to")
 	flag.BoolVar(&ignoreZeroPop, "nz", false, "Ignore features with population 0")
 	flag.BoolVar(&prettyJSON, "pretty", false, "Indent JSON responses")
+	flag.BoolVar(&excludeOrigin, "exclude-origin", false, "Exclude point of origin of bounding box")
 }
 
 func main() {

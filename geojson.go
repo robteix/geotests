@@ -127,6 +127,9 @@ func (fc FeatureCollection) GetFeaturesNear(cartoID int64, distance float64) ([]
 	fc.latIndex.DescendRange(latIndex{Latitude: box.Max.Lat()}, latIndex{Latitude: box.Min.Lat()}, func(i btree.Item) bool {
 		idx := i.(latIndex).Index
 		feat := fc.Features[idx]
+		if feat.Properties.CartoDBId == cartoID && excludeOrigin {
+			return true
+		}
 		featLon := feat.Geometry.Coordinates[0]
 		if featLon >= box.Min.Lon() && featLon <= box.Max.Lon() {
 			inLat = append(inLat, feat)
