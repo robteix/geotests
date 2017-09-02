@@ -18,7 +18,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&dataFile, "filename", "canada_cities.geojson", "A geojson file containing the data")
+	flag.StringVar(&dataFile, "filename", "data/canada_cities.geojson", "A geojson file containing the data")
 	flag.StringVar(&dataFile, "f", "data/canada_cities.geojson", "A geojson file containing the data (shorthand)")
 	flag.StringVar(&listen, "l", ":8000", "Where the server will listen to")
 	flag.BoolVar(&ignoreZeroPop, "nz", false, "Ignore features with population 0")
