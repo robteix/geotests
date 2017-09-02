@@ -32,12 +32,15 @@ func main() {
 
 	log.Printf("Reading data from %q\n", dataFile)
 	var err error
+
+	// load the file and index all entries
 	featureCollection, err = NewFeatureCollectionFromFile(dataFile)
 	if err != nil {
 		log.Fatalln("could create the feature collection: ", err)
 	}
-
 	log.Printf("Read %d features (%d indexed.) All ready.\n", len(featureCollection.Features), featureCollection.Indexed())
+
+	// start the HTTP server
 	log.Fatal(http.ListenAndServe(listen, setupAPIRouter()))
 }
 

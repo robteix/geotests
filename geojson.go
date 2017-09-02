@@ -141,6 +141,7 @@ func (fc FeatureCollection) GetFeaturesNear(cartoID int64, distance float64) ([]
 	return inLat, nil
 }
 
+// Indexed returns the number of items that have been indexed
 func (fc FeatureCollection) Indexed() int {
 	return fc.latIndex.Len()
 }
