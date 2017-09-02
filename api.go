@@ -35,6 +35,9 @@ func makeHandlerFunc(fn handlerFunc) http.HandlerFunc {
 		res, status := fn(r)
 		w.Header().Set("API-Response-Time", fmt.Sprintf("%v", time.Since(now)))
 		w.Header().Set("Content-Type", "application/json")
+		if status == 0 {
+			status = http.StatusOK
+		}
 		w.WriteHeader(status)
 		encoder := json.NewEncoder(w)
 		if prettyJSON {
