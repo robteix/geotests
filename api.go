@@ -12,7 +12,7 @@ import (
 
 // The JSON reponse representing a city
 type city struct {
-	CartoID     int64       `json:"cartodb_id"`
+	CartoID     int         `json:"cartodb_id"`
 	Name        string      `json:"name"`
 	Population  int         `json:"population"`
 	Coordinates Coordinates `json:"coordinates"`
@@ -58,7 +58,7 @@ func makeHandlerFunc(fn handlerFunc) http.HandlerFunc {
 // getIDHandler handles the requests to /id/<cityid>.
 func getIDHandler(r *http.Request) (response interface{}, status int) {
 	idS := mux.Vars(r)["cityId"]
-	cityID, err := strconv.ParseInt(idS, 10, 64)
+	cityID, err := strconv.Atoi(idS)
 	if err != nil { // bad value. CartoDB_IDs should be integers
 		return makeError(http.StatusBadRequest, err.Error())
 	}
@@ -104,7 +104,7 @@ func getCitiesInBox(f *Feature, distParam string) (response interface{}, status 
 	}
 
 	for _, v := range feats {
-		cities.Cities[strconv.FormatInt(v.Properties.CartoDBId, 10)] = featureToCity(v)
+		cities.Cities[strconv.Itoa(v.Properties.CartoDBId)] = featureToCity(v)
 	}
 
 	return makeOk(cities)

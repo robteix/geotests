@@ -58,7 +58,7 @@ type FeatureProperties struct {
 	Capital    string    `json:"capital"`
 	Population int       `json:"population"`
 	PClass     string    `json:"pclass"`
-	CartoDBId  int64     `json:"cartodb_id"`
+	CartoDBId  int       `json:"cartodb_id"`
 	Createdat  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 }
@@ -79,29 +79,40 @@ func NewFeatureCollectionFromFile(filename string) (*FeatureCollection, error) {
 	}
 
 	// create indexes
-	featCollection.idIndex = btree.New(2)
-	featCollection.latIndex = btree.New(2)
-	for k, v := range featCollection.Features {
+	featCollection.indexItems()
+
+	return featCollection, nil
+}
+
+// indexItems will index all items in the FeatureCollection
+// in binary trees.
+func (fc *FeatureCollection) indexItems() {
+	fc.idIndex = btree.New(2)
+	fc.latIndex = btree.New(2)
+	for k, v := range fc.Features {
 		if ignoreZeroPop && v.Properties.Population == 0 {
 			continue
 		}
-		latItem := latIndex{
-			Index:    k,
-			Latitude: v.Geometry.Coordinates[1],
+		if len(v.Geometry.Coordinates) > 1 { // index if we have coordinates
+			latItem := latIndex{
+				Index:    k,
+				Latitude: v.Geometry.Coordinates[1],
+			}
+			fc.latIndex.ReplaceOrInsert(latItem)
 		}
 		idItem := idIndex{
 			Index:   k,
 			CartoID: v.Properties.CartoDBId,
 		}
-		featCollection.idIndex.ReplaceOrInsert(idItem)
-		featCollection.latIndex.ReplaceOrInsert(latItem)
+		fc.idIndex.ReplaceOrInsert(idItem)
 	}
-
-	return featCollection, nil
 }
 
 // FindID tries to find and fetch a Feature from its cartoid
-func (fc FeatureCollection) FindID(code int64) (feature Feature, found bool) {
+func (fc FeatureCollection) FindID(code int) (feature Feature, found bool) {
+	if fc.latIndex == nil || fc.idIndex == nil {
+		fc.indexItems() // generate indexes if needed
+	}
 	i := fc.idIndex.Get(idIndex{CartoID: code})
 	if i == nil {
 		return Feature{}, false
@@ -113,7 +124,10 @@ func (fc FeatureCollection) FindID(code int64) (feature Feature, found bool) {
 
 // GetFeaturesNear returns a list of all features found
 // within distance in Km of the FEATURES identified by its cartoId
-func (fc FeatureCollection) GetFeaturesNear(cartoID int64, distance float64) ([]Feature, error) {
+func (fc FeatureCollection) GetFeaturesNear(cartoID int, distance float64) ([]Feature, error) {
+	if fc.latIndex == nil || fc.idIndex == nil {
+		fc.indexItems() // generate indexes if needed
+	}
 	origin, found := fc.FindID(cartoID)
 	if !found {
 		return nil, fmt.Errorf("could not find a city with a CartoDBId %d", cartoID)
@@ -143,7 +157,10 @@ func (fc FeatureCollection) GetFeaturesNear(cartoID int64, distance float64) ([]
 
 // Indexed returns the number of items that have been indexed
 func (fc FeatureCollection) Indexed() int {
-	return fc.latIndex.Len()
+	if fc.idIndex == nil {
+		return 0
+	}
+	return fc.idIndex.Len()
 }
 
 // The latitude-based index that implements the btree.Item
@@ -169,7 +186,7 @@ func (a latIndex) Less(b btree.Item) bool {
 // interface and will be stored in a btree for quick retrieval
 type idIndex struct {
 	Index   int
-	CartoID int64
+	CartoID int
 }
 
 // Implements btree.Item and tests whether item a is less than item b
