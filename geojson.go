@@ -152,7 +152,13 @@ type latIndex struct {
 // Implements btree.Item and tests whether item a is less than item b
 // based on its latitude
 func (a latIndex) Less(b btree.Item) bool {
-	return a.Latitude < b.(latIndex).Latitude
+	li := b.(latIndex)
+	if a.Latitude == li.Latitude {
+		// differenciate two cities with the exact same
+		// latitude by Index)
+		return a.Index < li.Index
+	}
+	return a.Latitude < li.Latitude
 }
 
 // The cartoid-based index that implements a btree.Item
