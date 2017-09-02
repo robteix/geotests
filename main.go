@@ -13,6 +13,7 @@ var (
 	dataFile      string
 	listen        string
 	ignoreZeroPop bool // ignore features with 0 population
+	prettyJSON    bool // whether to indent JSON responses
 )
 
 func init() {
@@ -20,6 +21,7 @@ func init() {
 	flag.StringVar(&dataFile, "f", "canada_cities.geojson", "A geojson file containing the data (shorthand)")
 	flag.StringVar(&listen, "l", ":8000", "Where the server will listen to")
 	flag.BoolVar(&ignoreZeroPop, "nz", false, "Ignore features with population 0")
+	flag.BoolVar(&prettyJSON, "pretty", false, "Indent JSON responses")
 }
 
 func main() {
